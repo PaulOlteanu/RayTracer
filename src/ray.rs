@@ -11,6 +11,10 @@ impl Ray {
         Ray { origin, direction }
     }
 
+    pub fn origin(&self) -> Vector3<f64> {
+        self.origin
+    }
+
     pub fn direction(&self) -> Vector3<f64> {
         self.direction
     }

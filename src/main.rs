@@ -3,6 +3,7 @@ use cgmath::Vector3;
 mod canvas;
 mod ray;
 mod scene;
+mod shading;
 
 use self::canvas::Canvas;
 use self::scene::{scene_objects::Sphere, Scene};
@@ -12,8 +13,8 @@ const CANVAS_HEIGHT: u32 = 100;
 const CAMERA_DISTANCE: f64 = 20.0;
 
 fn main() {
-    let x = Vector3::new(1.0, 0.0, 0.0);
-    let y = Vector3::new(0.0, 1.0, 0.0);
+    let _x = Vector3::new(1.0, 0.0, 0.0);
+    let _y = Vector3::new(0.0, 1.0, 0.0);
     let z = Vector3::new(0.0, 0.0, 1.0);
 
     let camera_origin = Vector3::new(0.0, 0.0, 0.0);
@@ -29,8 +30,8 @@ fn main() {
         camera_direction,
     );
 
-    let sphere1_origin = Vector3::new(0, 0, 0);
-    let sphere1_radius = 50;
+    let sphere1_origin = Vector3::new(0.0, -20.0, -50.0);
+    let sphere1_radius = 20.0;
     let sphere1 = Sphere::new(sphere1_origin, sphere1_radius);
 
     scene.add_object(sphere1);
