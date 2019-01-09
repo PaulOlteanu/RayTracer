@@ -1,9 +1,10 @@
 pub mod scene_objects;
 
 use crate::ray::Ray;
+use cgmath::{InnerSpace, Vector3};
 
 pub trait SceneObject: std::fmt::Debug {
-   fn collided(&self, ray: &Ray) -> bool;
+    fn collision(&self, ray: &Ray) -> Option<Vector3<f64>>;
 }
 
 pub struct Scene {
@@ -25,7 +26,7 @@ impl Scene {
         let mut result = Vec::new();
 
         for object in self.scene_objects.iter() {
-            if object.collided(ray) {
+            if object.collision(ray).is_some() {
                 result.push(&**object);
             }
         }

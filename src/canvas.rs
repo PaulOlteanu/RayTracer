@@ -69,6 +69,10 @@ impl Canvas {
 
         let t = (ray.direction().normalize().y + 1.0) / 2.0;
         let colour = (1.0 - t) * Vector3::new(1.0, 1.0, 1.0) + t * Vector3::new(0.7, 0.7, 1.0);
-        Vector3::new((colour.x * 255.0) as u8, (colour.y * 255.0) as u8, (colour.z * 255.0) as u8)
+        Vector3::new(
+            (colour.x * 255.0) as u8,
+            (colour.y * 255.0) as u8,
+            (colour.z * 255.0) as u8,
+        )
     }
 }
