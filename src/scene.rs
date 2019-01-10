@@ -1,10 +1,12 @@
 pub mod scene_objects;
 
+use crate::collision::Collision;
 use crate::ray::Ray;
-use cgmath::{InnerSpace, Vector3};
+use crate::shading::ShadingData;
 
 pub trait SceneObject: std::fmt::Debug {
-    fn collision(&self, ray: &Ray) -> Option<Vector3<f64>>;
+    fn collision(&self, ray: &Ray) -> Option<Collision>;
+    fn get_shading_data(&self) -> &ShadingData;
 }
 
 pub struct Scene {
@@ -22,15 +24,15 @@ impl Scene {
         self.scene_objects.push(Box::new(obj));
     }
 
-    pub fn get_collisions(&self, ray: &Ray) -> Vec<&SceneObject> {
-        let mut result = Vec::new();
+    pub fn get_collisions(&self, ray: &Ray) -> Vec<Collision> {
+        let mut collisions = Vec::new();
 
         for object in self.scene_objects.iter() {
-            if object.collision(ray).is_some() {
-                result.push(&**object);
+            if let Some(collision) = object.collision(ray) {
+                collisions.push(collision);
             }
         }
 
-        result
+        collisions
     }
 }

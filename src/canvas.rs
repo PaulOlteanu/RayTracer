@@ -46,11 +46,8 @@ impl Canvas {
                     0.0,
                 );
 
-            // This is in terms of the camera's basis
-            let _current_ray = Ray::new(ray_source, ray_direction);
-
             // In terms of scene's basis
-            let collision_ray = Ray::new(ray_source - self.location, ray_direction - self.location);
+            let collision_ray = Ray::new(ray_source, ray_direction - ray_source);
 
             let colour = Self::colour_ray(&collision_ray, scene);
             *pixel = image::Rgb([colour.x, colour.y, colour.z]);
@@ -63,12 +60,26 @@ impl Canvas {
         // Check for collisions using a ray that's in terms of the scene's coordinates and basis
         let collisions = scene.get_collisions(&ray);
 
+        // Find the first thing collided with
         if collisions.len() > 0 {
-            return Vector3::new(0, 0, 0);
+            let mut first_collision = collisions.first().unwrap();
+            for collision in collisions.iter() {
+                if (ray.origin() - collision.point).magnitude() < (ray.origin() - first_collision.point).magnitude() {
+                    first_collision = collision;
+                }
+            }
+
+            let colour = 0.5 * Vector3::new(first_collision.normal.x + 1.0, first_collision.normal.y + 1.0, first_collision.normal.z + 1.0);
+
+            return Vector3::new(
+                (colour.x * 255.0) as u8,
+                (colour.y * 255.0) as u8,
+                (colour.z * 255.0) as u8,
+            )
         }
 
         let t = (ray.direction().normalize().y + 1.0) / 2.0;
-        let colour = (1.0 - t) * Vector3::new(1.0, 1.0, 1.0) + t * Vector3::new(0.7, 0.7, 1.0);
+        let colour = (1.0 - t) * Vector3::new(1.0, 1.0, 1.0) + t * Vector3::new(0.5, 0.7, 1.0);
         Vector3::new(
             (colour.x * 255.0) as u8,
             (colour.y * 255.0) as u8,

@@ -1,5 +1,6 @@
 use cgmath::Vector3;
 
+#[derive(Debug)]
 pub struct ShadingData {
-    colour: Vector3<u8>,
+    pub colour: Vector3<u8>,
 }
