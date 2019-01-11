@@ -2,11 +2,11 @@ pub mod scene_objects;
 
 use crate::collision::Collision;
 use crate::ray::Ray;
-use crate::shading::ShadingData;
+use crate::shading::Shader;
 
 pub trait SceneObject: std::fmt::Debug {
     fn collision(&self, ray: &Ray) -> Option<Collision>;
-    fn get_shading_data(&self) -> &ShadingData;
+    fn get_shading_data(&self) -> &Box<Shader>;
 }
 
 pub struct Scene {
