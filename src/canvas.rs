@@ -45,7 +45,7 @@ impl Canvas {
             let x_coordinate = 2.0 * x_pixel as f64 - self.x_size as f64 - 1.0;
             let y_coordinate = 2.0 * y_pixel as f64 - self.y_size as f64 - 1.0;
 
-            println!("COORDINATE: {:?}, {:?}", x_coordinate, y_coordinate);
+            // println!("COORDINATE: {:?}, {:?}", x_coordinate, y_coordinate);
 
             let mut colour = Vector3::new(0, 0, 0);
 
@@ -68,11 +68,11 @@ impl Canvas {
 
                 let collision_ray = Ray::new(ray_source, ray_direction);
                 // TODO: This is terrible
-                let col = Self::colour_ray(&collision_ray, scene, 0, 10);
+                let col = Self::colour_ray(&collision_ray, scene, 0, 50);
                 colour += Vector3::new(
-                    (col.x * 255.0) as u64,
-                    (col.y * 255.0) as u64,
-                    (col.z * 255.0) as u64,
+                    (col.x.sqrt() * 255.0) as u64,
+                    (col.y.sqrt() * 255.0) as u64,
+                    (col.z.sqrt() * 255.0) as u64,
                 );
                 // colour += Vector3::new(col.x as u64, col.y as u64, col.z as u64);
             }
@@ -104,13 +104,9 @@ impl Canvas {
 
             let s = Self::point_in_sphere(1.0);
 
-            0.5 * Self::colour_ray(&Ray::new(first_collision.point, s - first_collision.point), scene, current_reflections + 1, max_reflections)
+            let direction = first_collision.normal + s;
 
-            // (0.5 * Vector3::new(
-            //     first_collision.normal.x + 1.0,
-            //     first_collision.normal.y + 1.0,
-            //     first_collision.normal.z + 1.0,
-            // ))
+            0.5 * Self::colour_ray(&Ray::new(first_collision.point, direction), scene, current_reflections + 1, max_reflections)
         } else {
             let t = (ray.direction().normalize().y + 1.0) / 2.0;
             (1.0 - t) * Vector3::new(1.0, 1.0, 1.0) + t * Vector3::new(0.5, 0.7, 1.0)
@@ -122,8 +118,8 @@ impl Canvas {
     fn point_in_sphere(radius: f64) -> Vector3<f64> {
         let mut rng = rand::thread_rng();
 
-        let direction: Vector3<f64> = Vector3::new(rng.gen(), rng.gen(), rng.gen()).normalize();
-        let mag: f64 = rng.gen_range(1E-3, radius);
+        let direction: Vector3<f64> = ((2.0 * Vector3::new(rng.gen::<f64>(), rng.gen::<f64>(), rng.gen::<f64>())) - Vector3::new(1.0, 1.0, 1.0)).normalize();
+        let mag: f64 = rng.gen_range(1E-2, radius);
 
         mag * direction
     }
