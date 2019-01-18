@@ -3,6 +3,7 @@ use rand::prelude::*;
 
 use crate::ray::Ray;
 use crate::scene::Scene;
+use crate::util;
 
 pub struct Canvas {
     x_size: u32,
@@ -58,11 +59,7 @@ impl Canvas {
                 // The direction ray is multipled to the "screen", then is shifted up/down/left/right to the current pixel
                 // TODO: This needs to be changed to not be z 0
                 let ray_direction = ((self.camera_distance * self.direction)
-                    + Vector3::new(
-                        x_coordinate + x_offset,
-                        y_coordinate + y_offset,
-                        0.0,
-                    )
+                    + Vector3::new(x_coordinate + x_offset, y_coordinate + y_offset, 0.0)
                     - ray_source)
                     .normalize();
 
@@ -84,7 +81,12 @@ impl Canvas {
         image_buffer.save(format!("{}.png", out_file_path)).unwrap();
     }
 
-    fn colour_ray(ray: &Ray, scene: &Scene, current_reflections: u32, max_reflections: u32) -> Vector3<f64> {
+    fn colour_ray(
+        ray: &Ray,
+        scene: &Scene,
+        current_reflections: u32,
+        max_reflections: u32,
+    ) -> Vector3<f64> {
         if current_reflections == max_reflections {
             return Vector3::new(1.0, 1.0, 1.0);
         }
@@ -102,25 +104,27 @@ impl Canvas {
                 }
             }
 
-            let s = Self::point_in_sphere(1.0);
+            let s = util::point_in_sphere(1.0);
 
             let direction = first_collision.normal + s;
 
-            0.5 * Self::colour_ray(&Ray::new(first_collision.point, direction), scene, current_reflections + 1, max_reflections)
+            if let Some((attenuation, scatter)) = first_collision.shading_data.scatter(ray, first_collision) {
+                attenuation * Self::colour_ray(scatter, scene, current_reflections + 1, max_reflections)
+            } else {
+                Vector3::new(0.0, 0.0, 0.0)
+            }
+
+            // 0.5 * Self::colour_ray(
+            //     &Ray::new(first_collision.point, direction),
+            //     scene,
+            //     current_reflections + 1,
+            //     max_reflections,
+            // )
         } else {
             let t = (ray.direction().normalize().y + 1.0) / 2.0;
             (1.0 - t) * Vector3::new(1.0, 1.0, 1.0) + t * Vector3::new(0.5, 0.7, 1.0)
         };
 
         colour
-    }
-
-    fn point_in_sphere(radius: f64) -> Vector3<f64> {
-        let mut rng = rand::thread_rng();
-
-        let direction: Vector3<f64> = ((2.0 * Vector3::new(rng.gen::<f64>(), rng.gen::<f64>(), rng.gen::<f64>())) - Vector3::new(1.0, 1.0, 1.0)).normalize();
-        let mag: f64 = rng.gen_range(1E-2, radius);
-
-        mag * direction
     }
 }

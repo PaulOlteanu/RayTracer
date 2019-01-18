@@ -1,17 +1,22 @@
-use crate::shading::Shader;
 use crate::collision::Collision;
 use crate::ray::Ray;
+use crate::shading::Shader;
+use crate::util;
 
 use cgmath::Vector3;
 
 #[derive(Debug)]
 pub struct Lambertian {
-
+    pub albedo: Vector3<f64>,
 }
 
 // TODO: Implement this
 impl Shader for Lambertian {
-    fn scatter(&self, ray: &Ray, collision: &Collision, attenuation: Vector3<f64>) -> Vector3<f64> {
-        Vector3::new(0.0, 0.0, 0.0)
+    // Return value is (attenuation, scatter)
+    fn scatter(&self, ray: &Ray, collision: &Collision) -> Option<(Vector3<f64>, Ray)> {
+        let target = collision.point + collision.normal + util::point_in_sphere(1.0);
+        let scattered = Ray::new(collision.point, target - collision.point);
+        let attenuation = self.albedo;
+        Some((attenuation, scattered))
     }
 }

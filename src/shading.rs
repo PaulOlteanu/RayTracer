@@ -7,5 +7,5 @@ mod lambertian;
 pub use self::lambertian::Lambertian;
 
 pub trait Shader: std::fmt::Debug {
-    fn scatter(&self, ray: &Ray, collision: &Collision, attenuation: Vector3<f64>) -> Vector3<f64>;
+    fn scatter(&self, ray: &Ray, collision: &Collision) -> Option<(Vector3<f64>, Ray)>;
 }
