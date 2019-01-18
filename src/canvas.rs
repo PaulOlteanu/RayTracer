@@ -104,22 +104,12 @@ impl Canvas {
                 }
             }
 
-            let s = util::point_in_sphere(1.0);
-
-            let direction = first_collision.normal + s;
-
             if let Some((attenuation, scatter)) = first_collision.shading_data.scatter(ray, first_collision) {
-                attenuation * Self::colour_ray(scatter, scene, current_reflections + 1, max_reflections)
+                let next_colour = Self::colour_ray(&scatter, scene, current_reflections + 1, max_reflections);
+                Vector3::new(attenuation.x * next_colour.x, attenuation.y * next_colour.y, attenuation.z * next_colour.z)
             } else {
                 Vector3::new(0.0, 0.0, 0.0)
             }
-
-            // 0.5 * Self::colour_ray(
-            //     &Ray::new(first_collision.point, direction),
-            //     scene,
-            //     current_reflections + 1,
-            //     max_reflections,
-            // )
         } else {
             let t = (ray.direction().normalize().y + 1.0) / 2.0;
             (1.0 - t) * Vector3::new(1.0, 1.0, 1.0) + t * Vector3::new(0.5, 0.7, 1.0)

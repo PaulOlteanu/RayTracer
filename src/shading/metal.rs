@@ -3,7 +3,7 @@ use crate::ray::Ray;
 use crate::shading::Shader;
 use crate::util;
 
-use cgmath::Vector3;
+use cgmath::{InnerSpace, Vector3};
 
 #[derive(Debug)]
 pub struct Metal {

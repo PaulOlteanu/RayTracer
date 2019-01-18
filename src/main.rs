@@ -34,12 +34,21 @@ fn main() {
         camera_direction,
     );
 
-    let sphere1_origin = Vector3::new(0.0, 0.0, -200.0);
+    let sphere1_origin = Vector3::new(120.0, 0.0, -200.0);
     let sphere1_radius = 100.0;
     let sphere1_shader = shading::Lambertian {
         albedo: Vector3::new(0.8, 0.8, 0.8),
     };
     let sphere1 = Sphere::new(sphere1_origin, sphere1_radius, Box::new(sphere1_shader));
+    scene.add_object(sphere1);
+
+    let sphere3_origin = Vector3::new(-120.0, 0.0, -200.0);
+    let sphere3_radius = 100.0;
+    let sphere3_shader = shading::Metal {
+        albedo: Vector3::new(0.8, 0.8, 0.8),
+    };
+    let sphere3 = Sphere::new(sphere3_origin, sphere3_radius, Box::new(sphere3_shader));
+    scene.add_object(sphere3);
 
     let sphere2_origin = Vector3::new(0.0, -20100.0, -200.0);
     let sphere2_radius = 20000.0;
@@ -47,8 +56,6 @@ fn main() {
         albedo: Vector3::new(0.8, 0.8, 0.8),
     };
     let sphere2 = Sphere::new(sphere2_origin, sphere2_radius, Box::new(sphere2_shader));
-
-    scene.add_object(sphere1);
     scene.add_object(sphere2);
 
     canvas.capture(&scene, RAYS_PER_PIXEL, String::from("asdf"));
